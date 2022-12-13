@@ -1,0 +1,5 @@
+# IDE preferences folders
+/.vscode
+/.vs
+.idea/
+node_modules
