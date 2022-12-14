@@ -46,24 +46,6 @@ func TestToHash(t *testing.T) {
 	assert.Len(t, actualHash, 43)
 }
 
-func TestIsPaddingPresent(t *testing.T) {
-	tests := []struct {
-		hash             string
-		numOfPaddings    uint8
-		isPaddingPresent bool
-	}{
-		{hash: "", numOfPaddings: 0, isPaddingPresent: false},
-		{hash: "abs=", numOfPaddings: 1, isPaddingPresent: true},
-		{hash: "abs==", numOfPaddings: 2, isPaddingPresent: true},
-	}
-
-	for _, test := range tests {
-		num, isPresent := gokadena.IsPaddingPresent(test.hash)
-		assert.Equal(t, num, test.numOfPaddings)
-		assert.Equal(t, isPresent, test.isPaddingPresent)
-	}
-}
-
 func TestToCmd(t *testing.T) {
 	req := gokadena.Request{
 		Payload: gokadena.Payload{

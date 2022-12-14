@@ -18,6 +18,8 @@ const (
 
 // Request defines command request aka payload.
 type Request struct {
+	PactCode  string   `json:"pactCode"`
+	EnvData   string   `json:"envData"`
 	Payload   Payload  `json:"payload"`
 	NetworkID string   `json:"networkId"`
 	Meta      Meta     `json:"meta"`
@@ -98,7 +100,7 @@ func CreationTime() int64 {
 
 // Nonce is helper that returns nonce of current tx.
 func Nonce() string {
-	return time.Now().UTC().String()
+	return time.Now().Format(time.RFC3339)
 }
 
 // ToJSON converts request to json.
@@ -116,42 +118,9 @@ func (request Request) ToHash() (string, error) {
 	}
 
 	hashedReq := blake2b.Sum256([]byte(requestJSON))
-	var hashBytes = make([]byte, 0, len(hashedReq))
-	for _, char := range hashedReq {
-		hashBytes = append(hashBytes, char)
-	}
-
-	hash := base64.StdEncoding.EncodeToString(hashBytes)
-	numOfPadding, isPresent := IsPaddingPresent(hash)
-	if isPresent {
-		hash = hash[:len(hash)-int(numOfPadding)]
-	}
+	hash := base64.RawStdEncoding.EncodeToString(hashedReq[:])
 
 	return hash, nil
-}
-
-// IsPaddingPresent checks is base64 encoded string has padding in the end
-// and returns num of paddings.
-func IsPaddingPresent(hash string) (uint8, bool) {
-	const paddingSymbol = "="
-	var (
-		numOfPadding uint8
-		present      bool
-	)
-	if len(hash) < 2 {
-		return numOfPadding, present
-	}
-
-	// padding can only be in the last two characters of hash.
-	chars := hash[len(hash)-2:]
-	for _, ch := range chars {
-		if string(ch) == paddingSymbol {
-			numOfPadding++
-			present = true
-		}
-	}
-
-	return numOfPadding, present
 }
 
 // ToCmd returns cmd hash with decoded to json command payload.

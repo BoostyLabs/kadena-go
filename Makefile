@@ -5,9 +5,13 @@ help: ## Show help
 	@:
 
 .PHONY: tests
-tests: ## Run all tests except dev tests.
+tests: ## Run all unit-tests.
 	go test -v ./...
 
 .PHONY: dev_tests
-dev_tests: ## Run all tests includes dev one.
+dev_tests: ## Run all available tests.
 	DEV_MODE=true go test -v ./...
+
+.PHONY: lint
+lint: ## scan code to detect stylistic errors and potential bugs.
+	golangci-lint run
